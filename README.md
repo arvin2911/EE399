@@ -67,7 +67,7 @@ the remaining data points from the first set and second set.
 
 
 ## IV. Computational Results. 
-the plot from the training data and the minimum error will looks like this.
+the plot from the training data and the minimum error for the first set will looks like this.
 for line fit,
 ![](line20datatrain.png)
 for parabola fit, 
@@ -75,5 +75,13 @@ for parabola fit,
 for 19th degree polynomial,
 ![](poly20datatrain.png)
 
+and the minimum error for the test data are 14.979185421781299, 14.918659032328, and 175.51127228413117 consecutively.
 
+the plot from the training data and the minimum error for the first set will looks like this.
+for line fit,
+![](line20datatrain.png)
+for parabola fit, 
+![](para20datatrain.png)
+for 19th degree polynomial,
+![](poly20datatrain.png)
 ## V. Summary and Conclusions. 
