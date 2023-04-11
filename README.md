@@ -37,10 +37,36 @@ c = res.x
 we can find the minimum error using the velvit function with c as the parameter. we can then fit the parameter (c) to the first formula and plot the curve fit.
 
 ### 2D loss (error) landscape
-to find the local minima, fix two of the parameters and sweep through values of the other two parameters to generate a 2D loss (error) landscape. Do all combinations of two fixed parameters and two swept parameters, and visualize it using grid. we can np.linspace to set the range and size of data we want our parameter to be. 
-![grid](grid.png)
+to find the local minima, fix two of the parameters and sweep through values of the other two parameters by using np.linspace to generate a 2D loss (error) landscape. Do all combinations of two fixed parameters and two swept parameters, and visualize it using grid. 
+![](grid.png)
+we can now visually see the local minima (the dark color at loss landscape A and C).
+
+### Training data
+for the first set, we are using the first 20 data point as training data and for the second set we are using the first 10 and last 10 data point as training data, we repeat the process as when finding the minumum error and parameter, but using a different formula. 
+for the line fit, we use
+``` 
+def velfitline(c, x, y):
+    e2 = np.sqrt(1/(x.size)*np.sum((c[0]*x+c[1]-y)**2))
+    return e2
+```
+for the parabola fit, we use
+```
+def velfitparabola(c, x, y):
+    e2 = np.sqrt(1/(x.size)*np.sum((c[0]*(x**2)+c[1]*x+c[2]-y)**2))
+    return e2
+```
+and for the 19th degree polynomial, we use
+```
+def velfitpoly(c, x, y):
+    e2 = np.sqrt(1/(x.size)*np.sum((np.polyval(c,x)-y)**2))
+    return e2
+```
+### Test data
+we can then compute the least square error of these models on the test data which are
+the remaining data points from the first set and second set.
 
 
 ## IV. Computational Results. 
+
 
 ## V. Summary and Conclusions. 
