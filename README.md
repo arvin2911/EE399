@@ -18,7 +18,7 @@ $f(x) = Ax^2 + Bx + C  $
 and $f(x) = 19^{th}$ degree polynomial   
 
 using these function, find the least-squares error using the formula:   
-$\sqrt{(1/n)\Sigma_{j=1}^n(f(x_j)-y_j)^2}$
+$$\sqrt{(1/n)\Sigma_{j=1}^n(f(x_j)-y_j)^2}$$
 
 ### III. Algorithm Implementation and Development. 
 
