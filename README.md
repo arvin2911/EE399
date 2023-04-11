@@ -36,7 +36,7 @@ c = res.x
 we can then fit the parameter (c) to the first formula and plot the curve fit.
 
 to find the local minima, fix two of the parameters and sweep through values of the other two parameters to generate a 2D loss (error) landscape. Do all combinations of two fixed parameters and two swept parameters, and visualize it using grid. we can np.linspace to set the range and size of data we want our parameter to be. 
-![grid](attachment:grid.png)
+![grid](grid.png)
 
 
 ### IV. Computational Results. 
