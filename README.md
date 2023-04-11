@@ -87,4 +87,5 @@ for 19th degree polynomial,
 
 and the minimum error for the second test data are 7.011399521824588, 7.514532801924898, and 232.2173477123093 consecutively.
 
+After finding the model for the training data and plug the model to the test data, we can see that in line fit and parabola fit the curve model fit nicely and 19th degree polynomial the model didn't fit. this can be known by checking the minimum error. 
 ## V. Summary and Conclusions. 
