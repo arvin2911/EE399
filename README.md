@@ -75,13 +75,16 @@ for parabola fit,
 for 19th degree polynomial,
 ![](poly20datatrain.png)
 
-and the minimum error for the test data are 14.979185421781299, 14.918659032328, and 175.51127228413117 consecutively.
+and the minimum error for the first test data are 14.979185421781299, 14.918659032328, and 175.51127228413117 consecutively.
 
-the plot from the training data and the minimum error for the first set will looks like this.
+the plot from the training data and the minimum error for the second set will looks like this.
 for line fit,
-![](line20datatrain.png)
+![](line20datatrain2.png)
 for parabola fit, 
-![](para20datatrain.png)
+![](para20datatrain2.png)
 for 19th degree polynomial,
-![](poly20datatrain.png)
+![](poly20datatrain2.png)
+
+and the minimum error for the second test data are 7.011399521824588, 7.514532801924898, and 232.2173477123093 consecutively.
+
 ## V. Summary and Conclusions. 
