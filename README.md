@@ -21,8 +21,23 @@ The fourth function, $f(x) = 19^{th}$ degree polynomial, is a polynomial functio
 
 By using the least-squares error formula ( $E = \sqrt{(1/n)\Sigma_{j=1}^n(f(x_j)-y_j)^2}$  ) with these functions, we can determine which function provides the best fit for a given set of data. The least-squares error measures the distance between the predicted values of the function and the actual values of the data, and seeks to minimize this distance by adjusting the parameters of the function. By plotting the curve fit and comparing it to the original data, we can visually assess the quality of the fit and determine whether the function provides a good representation of the underlying relationship between the variables.
 
-
 ### III. Algorithm Implementation and Development. 
+By creating a fuction for the least-squares error using the first formula,
+```
+def velfit(c, x, y):
+    e2 = np.sqrt(1/(x.size)*np.sum((c[0]*np.cos(c[1]*x)+c[2]*x+c[3]-y)**2))
+    return e2
+```
+and v0 as an array of parameter, we can use the following to find the minimum optimized parameter (c).
+```
+res= opt.minimize(velfit, v0, args=(X, Y), method='Nelder-Mead')
+c = res.x
+```
+we can then fit the parameter (c) to the first formula and plot the curve fit.
+
+to find the local minima, fix two of the parameters and sweep through values of the other two parameters to generate a 2D loss (error) landscape. Do all combinations of two fixed parameters and two swept parameters, and visualize it using grid. we can np.linspace to set the range and size of data we want our parameter to be. 
+![Screenshot%202023-04-11%20at%2012.01.25%20AM.png](attachment:Screenshot%202023-04-11%20at%2012.01.25%20AM.png)
+
 
 ### IV. Computational Results. 
 
