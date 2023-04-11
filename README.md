@@ -67,6 +67,13 @@ the remaining data points from the first set and second set.
 
 
 ## IV. Computational Results. 
+the plot from the training data and the minimum error will looks like this.
+for line fit,
+
+for parabola fit, 
+
+for 19th degree polynomial,
+
 
 
 ## V. Summary and Conclusions. 
