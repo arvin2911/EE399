@@ -88,4 +88,6 @@ for 19th degree polynomial,
 and the minimum error for the second test data are 7.011399521824588, 7.514532801924898, and 232.2173477123093 consecutively.
 
 After finding the model for the training data and plug the model to the test data, we can see that in line fit and parabola fit the curve model fit nicely and 19th degree polynomial the model didn't fit. this can be known by checking the minimum error. 
+
 ## V. Summary and Conclusions. 
+to conclude, by using finding minimum optimized parameter, we can find the least-squares error and check if the curve model fit the test data. we can also visually see the local minima by sweeping through the parameters and plot it using grid. The higher the least-square error or minimum error we got for the test data using the model from the training data, the less fit the curve model will be for the data. instead, the lower the least-squares error or minimum error we got for the test data using the model from the training data, the curve model will fit better in the test data.
