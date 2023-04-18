@@ -15,3 +15,22 @@ In this section, we will provide a brief theoretical background on SVD. Singular
 ![](SVD.png)     
 SVD is usually used in the calculation of other matrix operations, such as matrix inverse, but also as a data reduction method in machine learning.
 
+## III. Algorithm Implementation and Development. 
+### compute 100 X 100 orrelation matrix between the first 100 images
+
+The yalafaces data consist of 2414 32X32 pixel images where each images are the column of the matrix making the yalefaces size 1024 × 2414. By taking the first 100 faces using this code,
+```
+faces100 = X[:,1:101]
+```
+there are 2 ways on finding the correlation of the matrix. first is by using
+```
+C100 = np.matmul(faces100.T,faces100)
+```
+and the second is by using 
+```
+C100 = np.corrcoef(faces100.T)
+```
+These are the images from plotting the 2 code above.
+![](100matmul.png)     
+![](100corrcoef.png)   
+the second code are more preferable because the image are more distinguishable.
