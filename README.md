@@ -34,3 +34,61 @@ These are the images from plotting the 2 code above.
 ![](100matmul.png)     
 ![](100corrcoef.png)   
 the second code are more preferable because the image are more distinguishable.
+
+### Plot the highly correlated faces and uncorrelated faces
+By using these code we can find the index of the maximum and minimum correlation coefficients and plot it.
+```
+max_idx = np.unravel_index(np.argmax(C100), C100.shape)
+min_idx = np.unravel_index(np.argmin(C100), C100.shape)
+```
+we can turn the column from X matrix into image by using 
+```
+max_img1 = X[:, max_idx[0]]
+max_img2 = X[:, max_idx[1]]
+min_img1 = X[:, min_idx[0]]
+min_img2 = X[:, min_idx[1]]
+```
+and finally we can plot the 2 picture for highly correlated and highly uncorrelated by using
+```
+# Plot the most highly correlated images
+fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+ax[0].imshow(max_img1.reshape(32, 32), cmap='gray')
+ax[0].set_title('Image {}'.format(max_idx[0]+1))
+ax[1].imshow(max_img2.reshape(32, 32), cmap='gray')
+ax[1].set_title('Image {}'.format(max_idx[1]+1))
+plt.show()
+
+# Plot the most uncorrelated images
+fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+ax[0].imshow(min_img1.reshape(32, 32), cmap='gray')
+ax[0].set_title('Image {}'.format(min_idx[0]+1))
+ax[1].imshow(min_img2.reshape(32, 32), cmap='gray')
+ax[1].set_title('Image {}'.format(min_idx[1]+1))
+plt.show()
+```
+### Compute 10 X 10 correlation matrix between 10 images in a certain index
+we can combine the column in the index (1, 313, 512, 5, 2400, 113, 1024, 87, 314, 2005) from X matrix into 1 array using
+```
+faces10 = np.hstack((X[:,1][:, np.newaxis], X[:,313][:, np.newaxis], X[:,512][:, np.newaxis], X[:,5][:, np.newaxis], X[:,2400][:, np.newaxis], X[:,113][:, np.newaxis], X[:,1024][:, np.newaxis], X[:,87][:, np.newaxis], X[:,314][:, np.newaxis], X[:,2005][:, np.newaxis]))
+```
+we can then compute the correlation with the steps similar with the 100 X 100 correlation matrix.
+
+### Find the first six eigenvectors with the largest magnitude eigenvalue.
+
+to find the first six eigenvectors with the largest magnitude eigenvalue, we can first compute Y which is the dot product of $X$ and $X^T$. then use
+```
+eigenvalues, eigenvectors = np.linalg.eig(Y)
+```
+to find the eigenvalues and eigenvectors. 
+
+use np.argsort to get the sorted index of the eigenavalues in ascending order, then use $[::-1]$ to turn it into descending order, and $[:6]$ to take the first 6 values like the code below.
+```
+largest_indices = np.argsort(np.abs(eigenvalues))[::-1][:6]
+```
+we can then sort the eigenvectors using
+```
+largest_eigenvectors = eigenvectors[:, largest_indices]
+```
+and finally take the first index as the largest eigenvector.
+
+### Compute the norm of difference of their absolute values and the percentage of variance captured by each of the first 6 SVD modes.
