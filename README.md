@@ -92,3 +92,21 @@ largest_eigenvectors = eigenvectors[:, largest_indices]
 and finally take the first index as the largest eigenvector.
 
 ### Compute the norm of difference of their absolute values and the percentage of variance captured by each of the first 6 SVD modes.
+
+to compute SVD in python, we can use 
+```
+U, S, Vt = np.linalg.svd(X, full_matrices=False)
+```
+to get the diagonal matrix ($S$) and 2 orthogonal matrices ($U$ and $V^T$).
+Get the first six principal component directions by applying 
+```
+P = U[:, :6].
+```
+Compare the first eigenvector v1 with the first SVD mode u1 and compute the norm of difference of their absolute values with the following code.
+```
+v1 = largest_eigenvectors[:, 0]
+u1 = P[:, 0]
+abs_diff = np.abs(v1 - u1)
+norm_abs_diff = np.linalg.norm(abs_diff)
+print(norm_abs_diff)
+```
