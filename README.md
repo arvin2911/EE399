@@ -16,7 +16,7 @@ In this section, we will provide a brief theoretical background on SVD. Singular
 SVD is usually used in the calculation of other matrix operations, such as matrix inverse, but also as a data reduction method in machine learning.
 
 ## III. Algorithm Implementation and Development. 
-### compute 100 X 100 orrelation matrix between the first 100 images
+### compute 100 X 100 Correlation matrix between the first 100 images
 
 The yalafaces data consist of 2414 32X32 pixel images where each images are the column of the matrix making the yalefaces size 1024 × 2414. By taking the first 100 faces using this code,
 ```
@@ -110,3 +110,29 @@ abs_diff = np.abs(v1 - u1)
 norm_abs_diff = np.linalg.norm(abs_diff)
 print(norm_abs_diff)
 ```
+To compute the percentage of variance captured by each mode, we can first calculate the total variance of the data, which is equal to the sum of the squared singular values. Then, for each mode, we can calculate the percentage of variance captured by dividing the squared singular value of that mode by the total variance and multiplying by 100.
+
+the 6 SVD modes produced by the code taken from 6 proncipal component direction will show the 6 main feature of the faces.
+
+## IV. Computational Results. 
+the figure of 100 X 100 currelation matrix from the first 100 images is
+![](100corrcoef.png)  
+and the highly correlated and highly uncorrelated images are respectively
+![](maxcorr.png)
+![](mincorr.png).
+
+for the 10 X 10 correlation matrix, the figure produced is
+![](10corrcoef.png)
+
+The largest eigenvector from the dot product of $X$ and $X^T$ are (0.02384327, 0.04535378, 0.05653196, 0.04441826, -0.03378603, 0.02207542)
+
+using SVD method with matrix X, we are able to find the first six principal component direction which is 
+![](6comp.png)
+
+the norm of difference of the absolute values are 2.
+
+finally, the 6 SVD modes percent of variances and the figure that we got after plotting are (72.92756747, 15.28176266, 2.56674494, 1.87752485, 0.63930584, 0.59243144) and
+![](6features.png)
+
+## V. Summary and Conclusions.
+to conclude, the highly correlated and highly uncorrelated images can be found by finding the indices of the maximum and minimum correlation coefficients and plot them. SVD modes which are the dominant features (the most important attributes) can be computed using the S matrix from the result of SVD the matrix X.
