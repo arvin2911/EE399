@@ -28,10 +28,23 @@ Singular Value Decomposition (SVD) is a method to break down a matrix into 3 par
 
 
 ## III. Algorithm Implementation and Development. 
+### Necessary import
+the necessary import for this project are
+```
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_openml
+from sklearn.decomposition import PCA
+from sklearn.model_selection import train_test_split
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import svm
+from sklearn.metrics import accuracy_score
+from itertools import combinations
+```
 ### Fetch, reshape, and SVD the MNIST data
 to fetch the MNIST data, we can use
 ```
-from sklearn.datasets import fetch_openml
 mnist = fetch_openml('mnist_784')
 X = mnist.data.astype('float32')
 X /= 255.0
@@ -119,8 +132,6 @@ we can do the same for 3 digits to train the LDA classifier and predict the accu
 ### using LDA, find the 2 digits that are the hardest to separate and the easiest the separate and count the accuracy
 to find the 2 digits that are the hardest and easiest to separate, first of all, we can create all possible pair using `digit_pairs = list(combinations(range(10), 2))`. we can then use for loop the check the accuracy for all the combination, and print the hardest and easiest pair to separate.
 ```
-from itertools import combinations
-
 # Train a binary classifier for each pair of digits
 accuracy_scores_LDA = {}
 digit_pairs = list(combinations(range(10), 2))
