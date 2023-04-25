@@ -169,3 +169,32 @@ y_pred = clf.predict(X_test)
 accuracy = accuracy_score(y_test, y_pred)
 print('Accuracy:', accuracy)
 ```
+
+## IV. Computational Results. 
+
+after performing SVD on the dataset and plotting the singular value spectrum, we will get 
+![](SVS.png)
+as you can see in the figure above, the modes effectiveness are decreassing exponentially. For a good image construction, I think around 100 modes (rank r of the digit space) are enough.
+
+
+the 3D plot that is projected onto column 2, 3, and 5 from the V-modes is   
+![](V235.png)
+
+another example of this is the 3D plot that is projected onto column 1, 5, and 9 which is 
+![](V159.png)
+
+
+After training the LDA classifier, to identify 2 different digits, for example if we pick digit 0 and digit 1, we will get the overall percent accuracy of 99.6%. Similar things goes when identifying 3 different digits. for example if we pick digit 0, digit 1, and digit 2, we will get the overall percent accuracy of 95%.
+
+The 3 classifiers separate all ten digits quite well, with the percent accuracy of 77% from LDA, 83.8% fro SVM, and 79.4% fro decision tree.
+
+The 2 digit that are the hardest and easiest to separate are (4, 9) and (0, 1) consecutively according to all 3 classifiers (LDA, SVM, and decision tree). The LDA shows the accuracy of 83.8% for (4, 9) and 99.7% for (0, 1), the SVM shows the accuracy of 83.8% for (4, 9) and 99.9% for (0, 1), and the decision tree shows the accuracy of 85.8% for (4, 9) and 99.7% for (0, 1).
+
+These 3 classifiers produce almost similar result with just slight difference. These bargraph shown below are the accuracy for LDA, SVM, and decision tree consecutively after being sorted.
+![](LDA_acc.png)
+![](SVM_acc.png)
+![](DT_acc.png)
+
+
+## V. Summary and Conclusions. 
+To conclude, the three classifiers (LDA, SVM, and decision tree) compute a similar accuracy for the MNIST dataset. for MNIST data, personally, while SVM is the best at accuracy, it took a long tome to compute which mean it is computational expensive. I think LDA is the best classifiers as it is the quickest classifier compared to the other classifiers and the accuracy is almost the same as decision tree. 
