@@ -97,13 +97,13 @@ for epoch in range(num_epochs):
     # Print the loss every epoch
     print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, num_epochs, loss.item()))
 
-# Make predictions on the train data
+# MSE on the test data
 with torch.no_grad():
     output = net(X_test_tensor)
     test_mse = criterion(output, Y_test_tensor)
     print('MSE of test data: {:.4f}'.format(test_mse.item()))
-    
 ```
+
 ### Fit a Feedforward Neural Network into a 2D data
 
 
