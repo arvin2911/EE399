@@ -202,7 +202,51 @@ with torch.no_grad():
         
     print('Accuracy of the network on the test images: {} %'.format(100 * correct / total))
 ```
+### LSTM on MNIST
 
+### SVM and decision tree on MNIST
+Firstly, we need to load the data and convert into numpy array.
+```
+# Load the MNIST dataset from OpenML
+mnist = fetch_openml('mnist_784')
+
+# Convert the data and labels to numpy arrays
+X = mnist.data.astype('float32') / 255.0    
+y = mnist.target.astype('int32')
+```
+Perform PCA to the data.
+```
+# Perform PCA to reduce the dimensionality of the data
+pca = PCA(n_components=20)
+X_pca_train = pca.fit_transform(X)
+```
+Split the data into training data and testing data.
+```
+# Split the whole dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X_pca_train, y, test_size=0.2, random_state=42)
+```
+Compute the percent accuracy for SVM by using 
+```
+# Train an SVM classifier on the training set
+clf = svm.SVC(kernel='linear', C=1)
+clf.fit(X_train, y_train)
+
+# Evaluate the classifier on the test set
+y_pred = clf.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print('Accuracy:', accuracy)
+```
+and compute the percent accuracy for decision tree by using
+```
+# Train a decision tree classifier on the training set
+clf = DecisionTreeClassifier(max_depth=10)
+clf.fit(X_train, y_train)
+
+# Evaluate the classifier on the test set
+y_pred = clf.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print('Accuracy:', accuracy)
+```
 ## IV. Computational Results.
 
 ## V. Summary and Conclusions.
