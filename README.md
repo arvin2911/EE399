@@ -203,7 +203,7 @@ with torch.no_grad():
     print('Accuracy of the network on the test images: {} %'.format(100 * correct / total))
 ```
 ### LSTM on MNIST
-to compute the accuracy for LSTM on MNIST, we can use
+to compute the accuracy for LSTM on MNIST, we can use the code shown below.
 ```
 # Define the LSTM network architecture
 class LSTMNet(nn.Module):
@@ -322,10 +322,11 @@ print('Accuracy:', accuracy)
 ```
 ## IV. Computational Results.
 ### Feedforward Neural Network onto 1D data.
-after using the 3 layer Feedforward Neural Network we build and train using the training data, we will use the model to compute the least square error or least square error.
+After using the 3 layer Feedforward Neural Network we build and train using the training data, we will use the model to compute the least square error or least square error.
 Using the first 20 data as the training data and the rest as the test data, the Mean Square Error for the test data is 147.0718 while by using the first 10 data and last 10 data as the training data and the rest as the test data, the Mean Square Error for the test data is 30.5956. This shows that using the first 10 data and last 10 data as the training data and the rest as the test data will give a lower Mean Square Error compared with using the first 20 data as the training data and the rest as the test data. If we compare these 2 model with the model from the first project (HW1), the first one give a better result than this.
 
 ### Feedforward Neural Network onto 2D data.
-
+After using the 3 layer Feedforward Neural Network we build and train using the training data, we will use the model to compute the accuracy of the Feedforward Neural Network on MNIST data was got 95.29%. We also compute the percent accuracy of the LSTM on the MNIST test images and got 97.42%. The same goes for SVM and decision tree which we got 90.61% and 79.34% consecutively.
 
 ## V. Summary and Conclusions.
+To conclude, for computing Mean Square Error on 1D data on a small dataset, its better to use Linear or Parabola compared to using Feedforward Neural Network. While for computing the accuracy on 2D data, the best classifier to use are LSTM because LSTM gives the highest percent accuracy which is 97.42%. After LSTM the accuracy rank are FFNN, SVM, and decision tree consecutively.
