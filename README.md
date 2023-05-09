@@ -103,10 +103,72 @@ with torch.no_grad():
     test_mse = criterion(output, Y_test_tensor)
     print('MSE of test data: {:.4f}'.format(test_mse.item()))
 ```
+Do the same thing using the first 10 and last 10 as the training data to fit the neural network and compute the least-square error for each of the training points. Then use the model on the test data which are the remaining data points.
+```
+# Prepare the data
+Y_train = np.concatenate((Y[:10],Y[21:])).astype(np.float32)
+X_train = np.concatenate((X[:10],X[21:])).astype(np.float32)
+Y_test = Y[10:21].astype(np.float32)
+X_test = X[10:21].astype(np.float32)
+X_train_tensor = torch.from_numpy(X_train)
+Y_train_tensor = torch.from_numpy(Y_train)
+X_test_tensor = torch.from_numpy(X_test)
+Y_test_tensor = torch.from_numpy(Y_test)
+```
+we can use the same code to train the neural network and compute the least-square error.
 
 ### Fit a Feedforward Neural Network into a 2D data
+Firstly, we need to create a neural network.
+```
+# Define the neural network architecture
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        self.fc1 = nn.Linear(20, 100)
+        self.fc2 = nn.Linear(100, 500)
+        self.fc3 = nn.Linear(500, 100)
 
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        x = torch.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+```
+We can the grab the MNIST data, apply transformations, and reshape the 2D images into 1D.
+```
+# Load the MNIST dataset and apply transformations
+train_dataset = datasets.MNIST(root='./data', train=True, transform=transforms.ToTensor(), download=True)
+test_dataset = datasets.MNIST(root='./data', train=False, transform=transforms.ToTensor())
 
+# Get the pixel values for all images in the dataset
+X_train = train_dataset.data.float()
+y_train = train_dataset.targets
+X_test = test_dataset.data.float()
+y_test = test_dataset.targets
+
+# Reshape the 2D images into 1D vectors
+X_train = X_train.view(X_train.size(0), -1)
+X_test = X_test.view(X_test.size(0), -1)
+```
+
+```
+
+pca = PCA(n_components=20)
+X_train_pca = pca.fit_transform(X_train)
+X_test_pca = pca.fit_transform(X_test)
+
+# Convert numpy arrays back to tensors
+X_train_pca_tensor = torch.tensor(X_train_pca, dtype=torch.float32)
+X_test_pca_tensor = torch.tensor(X_test_pca, dtype=torch.float32)
+
+# Create dataloaders for the training and test data
+train_data = torch.utils.data.TensorDataset(X_train_pca_tensor, y_train)
+test_data = torch.utils.data.TensorDataset(X_test_pca_tensor, y_test)
+
+# Create data loaders
+train_loader = torch.utils.data.DataLoader(train_data, batch_size=64, shuffle=True)
+test_loader = torch.utils.data.DataLoader(test_data, batch_size=64, shuffle=False)
+```
 ## IV. Computational Results.
 
 ## V. Summary and Conclusions.
