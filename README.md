@@ -248,5 +248,7 @@ accuracy = accuracy_score(y_test, y_pred)
 print('Accuracy:', accuracy)
 ```
 ## IV. Computational Results.
-
+### Feedforward Neural Network onto 1D data.
+after using the 3 layer Feedforward Neural Network we build and train using the training data, we will use the model to compute the least square error or least square error.
+the result of the computation are
 ## V. Summary and Conclusions.
