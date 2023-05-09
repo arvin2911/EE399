@@ -61,7 +61,7 @@ class Net(nn.Module):
         x = self.fc3(x)
         return x
 ```
-Initialize the network and define the loss function and optimizer.
+Initialize the network and define the loss function and optimizer. we are using the nn.MSELoss to compute the mean square error or least square error.
 ```
 net = Net()
 criterion = nn.MSELoss()
@@ -151,8 +151,8 @@ X_train = X_train.view(X_train.size(0), -1)
 X_test = X_test.view(X_test.size(0), -1)
 ```
 
+transform into 20 dimension using PCA and turn the data back into tensor type.
 ```
-
 pca = PCA(n_components=20)
 X_train_pca = pca.fit_transform(X_train)
 X_test_pca = pca.fit_transform(X_test)
@@ -169,6 +169,40 @@ test_data = torch.utils.data.TensorDataset(X_test_pca_tensor, y_test)
 train_loader = torch.utils.data.DataLoader(train_data, batch_size=64, shuffle=True)
 test_loader = torch.utils.data.DataLoader(test_data, batch_size=64, shuffle=False)
 ```
+Initialize the network and define the loss function and optimizer. In PyTorch, nn.CrossEntropyLoss is commonly used for classification problems where the model needs to predict a discrete label for each input.
+```
+net = Net()
+criterion = nn.CrossEntropyLoss()
+optimizer = torch.optim.SGD(net.parameters(), lr=0.01)
+```
+We then need to train the network and test it.
+```
+# Train the network
+num_epochs = 10
+for epoch in range(num_epochs):
+    for i, (images, labels) in enumerate(train_loader):
+        optimizer.zero_grad()
+        outputs = net(images)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+        
+        if (i+1) % 100 == 0:
+            print ('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'.format(epoch+1, num_epochs, i+1, len(train_loader), loss.item()))
+            
+# Test the network
+with torch.no_grad():
+    correct = 0
+    total = 0
+    for images, labels in test_loader:
+        outputs = net(images)
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+        
+    print('Accuracy of the network on the test images: {} %'.format(100 * correct / total))
+```
+
 ## IV. Computational Results.
 
 ## V. Summary and Conclusions.
