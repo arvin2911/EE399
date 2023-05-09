@@ -43,7 +43,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn import svm
 from sklearn.model_selection import train_test_split
 ```
-### fit a Feedforward Neural Network into a 1D data
+### Fit a Feedforward Neural Network into a 1D data
 Firstly, we need to create a Feedforward Neural Network.
 ```
 class Net(nn.Module):
@@ -61,7 +61,50 @@ class Net(nn.Module):
         x = self.fc3(x)
         return x
 ```
-### fit a Feedforward Neural Network into a 2D data
+Initialize the network and define the loss function and optimizer.
+```
+net = Net()
+criterion = nn.MSELoss()
+optimizer = torch.optim.SGD(net.parameters(), lr=0.01)
+```
+
+Given the data:
+```
+X = np.arange(0, 31).reshape(-1, 1)
+Y=np.array([30, 35, 33, 32, 34, 37, 39, 38, 36, 36, 37, 39, 42, 45, 45, 41, 40, 39, 42, 44, 47, 49, 50, 49, 46, 48, 50, 53, 55, 54, 53]).reshape(-1, 1)
+```
+Using the first 20 data points as training data, fit the neural network and compute the least-square error for each of the training points. Then use the model on the test data which are the remaining data points.
+```
+# Prepare the data
+Y_train = Y[:20].astype(np.float32)
+X_train = X[:20].astype(np.float32)
+Y_test = Y[20:].astype(np.float32)
+X_test = X[20:].astype(np.float32)
+X_train_tensor = torch.from_numpy(X_train)
+Y_train_tensor = torch.from_numpy(Y_train)
+X_test_tensor = torch.from_numpy(X_test)
+Y_test_tensor = torch.from_numpy(Y_test)
+
+# Train the neural network
+num_epochs = 100
+for epoch in range(num_epochs):
+    optimizer.zero_grad()   # zero the gradients
+    output = net(X_train_tensor)  # forward pass
+    loss = criterion(output, Y_train_tensor)  # compute the loss
+    loss.backward()  # backward pass
+    optimizer.step()  # update the weights
+    
+    # Print the loss every epoch
+    print('Epoch [{}/{}], Loss: {:.4f}'.format(epoch+1, num_epochs, loss.item()))
+
+# Make predictions on the train data
+with torch.no_grad():
+    output = net(X_test_tensor)
+    test_mse = criterion(output, Y_test_tensor)
+    print('MSE of test data: {:.4f}'.format(test_mse.item()))
+    
+```
+### Fit a Feedforward Neural Network into a 2D data
 
 
 ## IV. Computational Results.
