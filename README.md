@@ -282,7 +282,21 @@ with torch.no_grad():
 print('Least squares error of test data: {}'.format(test_loss.item()))
 ```
 ## IV. Computational Results.
+after training the model with FFNN, we got the following data    
+![](FFNN_train.png)   
+and after testing the model, we got the following data      
+![](FFNN_test.png)    
 
+for LSTM,    
+![](LSTM_train.png) 
+![](LSTM_test.png) 
 
+RNN,    
+![](RNN_train.png) 
+![](RNN_test.png) 
+
+and ESN.   
+![](ESN_train.png) 
+![](ESN_test.png) 
 ## V. Summary and Conclusions.
 
