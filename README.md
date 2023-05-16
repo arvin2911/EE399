@@ -1,25 +1,31 @@
 # EE399. 
 # introduction to machine learning. 
-# HW1. 
+# HW5. 
 
-## curve fitting with line, parabola, and 19th degree polynomial. 
+## FFNN, LSTM, RNN, ESN for future state prediction on Lorenz equations.
 Author: Arvin Nusalim. 
 
-Abstruct: Given the data, we tried to find the least-squares error and the parameters for that. Then we fix two of the parameters and sweep through values of the other two parameters to generate a 2D loss (error) landscape. do this for every combinations. some of the data are used to train the model and the rest are used to test the model. The model are used are line, parabola, and 19th degree polynomial.  
+Abstruct: using Feedforward Neural Network, Long Short-term Memory, Recurrent Neural Network, and Echo State Network on Lorenz equations for future state prediction. 
+
+Given the data, we tried to find the least-squares error and the parameters for that. Then we fix two of the parameters and sweep through values of the other two parameters to generate a 2D loss (error) landscape. do this for every combinations. some of the data are used to train the model and the rest are used to test the model. The model are used are line, parabola, and 19th degree polynomial.  
 
 ## I. Introduction and Overview.   
 This project's objective are to use the given data to find the least-squares error and parameters, find the local minimum when 2 of the parameter are sweep through and 2 of them are fixed. least-squares error is a method used to determine the line of best fit for the data. We are using the least-squares error with a few function to find which one is the best fit for the data. 
    
-## II. Theoritical Background. 
-In this section, we will provide a brief theoretical background on the functions that we will be using to find the least-squares error. The first function, $f(x) = A\cos(Bx) + Cx + D$, is a combination of a cosine wave and a linear function. This function can be used if the given data looks like a wave with a slope.
+## II. Theoritical Background.
+In this section, we will provide a brief theoretical background on Feedforward Neural Network (FFNN), Long Short-term Memory (LSTM), Recurrent Neural Network (RNN), and Echo State Network (ESN).
 
-The second function, $f(x) = Ax + B$, is a simple linear function that is commonly used if the given data looks like a line.
+### 1. Feedforward Neural Network (FFNN)
+A Feedforward Neural Network (FFNN) is a type of machine learning model that takes input and produces output in a single direction, with multiple layers of interconnected neurons in between. It's commonly used for tasks like predicting a label for an input. During training, the network adjusts its weights and biases to better match the desired output.
 
-The third function, $f(x) = Ax^2 + Bx + C$, is a quadratic function that is commonly used if the given data looks like a parabola.
+### 2. Long Short-term Memory (LSTM)
+Long Short-Term Memory (LSTM) is a type of neural network that is good at handling sequential data like text or speech. It has a special memory cell that can store information over time and three different types of gates to control the flow of information. LSTM networks can remember or forget information as needed and are commonly used for natural language processing and speech recognition.
 
-The fourth function, $f(x) = 19^{th}$ degree polynomial, is a polynomial function that can be used if the given data have a lot of curves (local minimum and maximum), up to 18 local minimum and maximum. The degree of the polynomial determines the number of coefficients that are needed to define the function, and higher-degree polynomials can capture more complex patterns in the data.
+### 3.  Recurrent Neural Network (RNN)
+Recurrent Neural Network (RNN) is a type of neural network commonly used for tasks involving sequences of data. It can remember previous inputs by using a hidden state, allowing it to learn patterns or dependencies in sequential data. RNNs are useful for tasks like language processing and time series prediction. However, they have difficulty capturing long-term dependencies.
 
-By using the least-squares error formula ( $E = \sqrt{(1/n)\Sigma_{j=1}^n(f(x_j)-y_j)^2}$  ) with these functions, we can determine which function provides the best fit for a given set of data. The least-squares error measures the distance between the predicted values of the function and the actual values of the data, and seeks to minimize this distance by adjusting the parameters of the function. By plotting the curve fit and comparing it to the original data, we can visually assess the quality of the fit and determine whether the function provides a good representation of the underlying relationship between the variables.
+### 4. Echo State Network (ESN)
+An Echo State Network (ESN) is a type of recurrent neural network (RNN) that is known for its simplicity and effectiveness in handling sequential data. It uses randomly initialized connections that remain fixed during training, while only the connections between input and output layers are learned. This fixed random initialization creates a reservoir of hidden states, which act as memory for processing sequential data. ESNs are computationally efficient, robust to gradient problems, and have been successfully applied to various tasks such as time series prediction and speech recognition.
 
 ## III. Algorithm Implementation and Development. 
 ### Finding the minimum error and parameter
