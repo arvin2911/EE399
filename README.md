@@ -169,12 +169,118 @@ with torch.no_grad():
     print('Least squares error of test data: {}'.format(compute_mse.item()))
 ```
 ### fit the Long Short term Memory, train, and test the model
+the data preparation for Long Short term Memory is the same as Feedforward Neural Network. the only things that is different are the model. instead of using FFNN, we use LSTM.
+```
+# Create an LSTM neural network architecture
+class LSTMNet(nn.Module):
+    def __init__(self, input_size=3, hidden_size=15, num_layers=1, output_size=3):
+        super(LSTMNet, self).__init__()
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
 
+    def forward(self, x):
+        # Initialize hidden and cell states
+        h0 = torch.zeros(self.num_layers, self.hidden_size)
+        c0 = torch.zeros(self.num_layers, self.hidden_size)
+        
+        # LSTM layer
+        out, _ = self.lstm(x, (h0, c0))
+        
+        # Fully connected layer
+        out = self.fc(out[:, :])
+        
+        return out
+```
+The initialization of th network is also different.
+```
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = LSTMNet().to(device)
+```
 ### fit the Recurrent Neural Network, train, and test the model
+Perform the same things like FFNN and LSTM for RNN after changing the model and initialization of the network.
+```
+# Create an RNN neural network architecture
+class RNNNet(nn.Module):
+    def __init__(self, input_size=3, hidden_size=15, num_layers=1, output_size=3):
+        super(RNNNet, self).__init__()
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        
+        self.rnn = nn.RNN(input_size, hidden_size, num_layers, batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
 
+    def forward(self, x):
+        # Initialize hidden state
+        h0 = torch.zeros(self.num_layers, self.hidden_size)
+        
+        # RNN layer
+        out, _ = self.rnn(x, h0)
+        
+        # Fully connected layer
+        out = self.fc(out[:, :])  # Use the last output timestep
+        
+        return out
+        
+# Create model instance
+model = RNNNet()
+```
 ### fit the Echo State Network, train, and test the model
+For Echo State Network, although the data preparation is the same, the training and testing model are slightly different.
+For the model and network initialization, we can use the code below.
+```
+class ESN(nn.Module):
+    def __init__(self, input_size=3, reservoir_size=100, output_size=3):
+        super(ESN, self).__init__()
+        self.input_size = input_size
+        self.reservoir_size = reservoir_size
+        self.output_size = output_size
+        
+        # Reservoir layer
+        self.reservoir = nn.Linear(input_size + reservoir_size, reservoir_size)
+        
+        # Output layer
+        self.output = nn.Linear(reservoir_size, output_size)
 
+    def forward(self, x, reservoir_state):
+        # Concatenate input with reservoir state
+        combined_input = torch.cat([x, reservoir_state], dim=1)
+        
+        # Reservoir layer
+        reservoir_output = torch.tanh(self.reservoir(combined_input))
+        
+        # Output layer
+        output = self.output(reservoir_output)
+        
+        return output, reservoir_output
+        
+# Create model instance
+model = ESN(input_size=3, reservoir_size=100, output_size=3)
+```
+To train the model, we can use this
+```
+# Train the model
+for epoch in range(30):
+    optimizer.zero_grad()
+    reservoir_state = torch.zeros(nn_in.size(0), model.reservoir_size)
+    outputs, _ = model(nn_in, reservoir_state)
+    loss = criterion(outputs, nn_out)
+    loss.backward()
+    optimizer.step()
+    print(f"Epoch {epoch + 1}, loss={loss.item():.4f}")
+```
+and to test it, we can use
+```
+# Evaluation
+reservoir_state = torch.zeros(nn_in_test.size(0), model.reservoir_size)
+with torch.no_grad():
+    predicted_output, _ = model(nn_in_test, reservoir_state)
+    test_loss = criterion(predicted_output, nn_out_test)
 
+print('Least squares error of test data: {}'.format(test_loss.item()))
+```
 ## IV. Computational Results.
 
 ## V. Summary and Conclusions.
