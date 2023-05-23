@@ -20,7 +20,7 @@ Long Short-Term Memory (LSTM) is a type of neural network that is good at handli
 A time lag variable in machine learning is a value from a previous point in time. For example, if you're predicting the weather, today's temperature might be affected by yesterday's temperature. In this case, yesterday's temperature is a time lag variable. It helps capture how things change over time and can improve the accuracy of predictions in time-based data.
 
 ### 3.  Gaussian noise
-Gaussian noise is a type of random noise that follows a bell-shaped curve, also known as a Gaussian distribution. In machine learning, it's often added to data for several reasons:  
+Gaussian noise, also known as normal noise, in machine learning refers to statistical noise having a probability density function (PDF) equal to that of the normal distribution, which is also known as the Gaussian distribution. In other words, it's a type of statistical noise where values are randomly distributed with a mean of 0 and some standard deviation. In machine learning, it's often added to data for several reasons:  
 1. Preventing Overfitting: Adding noise can help the model avoid learning too closely from the training data, making it more adaptable to new data.  
 2. Improving Robustness: Adding noise, especially in image processing tasks, can help the model perform better even when there's noise in real-world data.  
 3. Privacy Protection: Noise can help protect sensitive data by making it harder to identify original inputs.  
@@ -33,257 +33,107 @@ Gaussian noise is a type of random noise that follows a bell-shaped curve, also 
 the necessary import for this project are
 ```
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy import integrate
+from processdata import load_data
+from processdata import TimeSeriesDataset
+import models
 import torch
-import torch.nn as nn
-import torch.optim as optim
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
+```
+### Load the data and set the parameter
+```
+num_sensors = 3 
+lags = 52
+load_X = load_data('SST')
+n = load_X.shape[0]
+m = load_X.shape[1]
+sensor_locations = np.random.choice(m, size=num_sensors, replace=False)
 ```
 
-### Fit the Feedforward Neural Network
-Firstly, we need to create a Feedforward Neural Network.
+### prepare the data
+prepare the data using the code below.  
 ```
-class Net(nn.Module):
-    def __init__(self):
-        super(Net, self).__init__()
-        self.fc1 = nn.Linear(3, 15)
-        self.fc2 = nn.Linear(15, 6)
-        self.fc3 = nn.Linear(6, 3)
+train_indices = np.random.choice(n - lags, size=1000, replace=False)
+mask = np.ones(n - lags)
+mask[train_indices] = 0
+valid_test_indices = np.arange(0, n - lags)[np.where(mask!=0)[0]]
+valid_indices = valid_test_indices[::2]
+test_indices = valid_test_indices[1::2]
 
-    def forward(self, x):
-        x = torch.relu(self.fc1(x))
-        x = torch.relu(self.fc2(x))
-        x = self.fc3(x)
-        return x
-```
-Initialize the network and define the loss function and optimizer. we are using the nn.MSELoss to compute the mean square error or least square error.
-```
-model = Net()
-criterion = nn.MSELoss()
-optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
-```
-### define the parameter
-```
-# Define hyperparameters
-dt = 0.01
-T = 8
-t = np.arange(0,T+dt,dt)
-beta = 8/3
-sigma = 10
-# Given rho values to train and test
-rho_values_train = [10, 28, 40]
-rho_values_test = [17, 35]
-```
-### prepare the data to train
-we need to insert the $\rho$ = 10, 28 and 40 to train the model. 
-```
-# Define the NN input and output
-nn_input = np.zeros((100*(len(t)-1),3))
-nn_output = np.zeros_like(nn_input)
+sc = MinMaxScaler()
+sc = sc.fit(load_X[train_indices])
+transformed_X = sc.transform(load_X)
 
-# Create a list for input and output for the neural network (after data preparation)
-nn_input_final = []
-nn_output_final = []
+### Generate input sequences to a SHRED model
+all_data_in = np.zeros((n - lags, lags, num_sensors))
+for i in range(len(all_data_in)):
+    all_data_in[i] = transformed_X[i:i+lags, sensor_locations]
 
-# Data preparation
-for rho in rho_values_train:
-    
-    # Define the Lorenz equation
-    def lorenz_deriv(x_y_z, t0, sigma=sigma, beta=beta, rho=rho):
-        x, y, z = x_y_z
-        return [sigma * (y - x), x * (rho - z) - y, x * y - beta * z]
+### Generate training validation and test datasets both for reconstruction of states and forecasting sensors
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-    np.random.seed(123)
-    x0 = -15 + 30 * np.random.random((100, 3))
+train_data_in = torch.tensor(all_data_in[train_indices], dtype=torch.float32).to(device)
+valid_data_in = torch.tensor(all_data_in[valid_indices], dtype=torch.float32).to(device)
+test_data_in = torch.tensor(all_data_in[test_indices], dtype=torch.float32).to(device)
 
-    x_t = np.asarray([integrate.odeint(lorenz_deriv, x0_j, t)
-                      for x0_j in x0])
-    
-    for j in range(100):
-        nn_input[j*(len(t)-1):(j+1)*(len(t)-1),:] = x_t[j,:-1,:]
-        nn_output[j*(len(t)-1):(j+1)*(len(t)-1),:] = x_t[j,1:,:]
-        
-    # Convert numpy arrays to PyTorch tensors
-    nn_input_tensor = torch.from_numpy(nn_input).float()
-    nn_output_tensor = torch.from_numpy(nn_output).float()
-    
-    # Appending the tensors to a list
-    nn_input_final.append(nn_input_tensor)
-    nn_output_final.append(nn_output_tensor)
-    
+### -1 to have output be at the same time as final sensor measurements
+train_data_out = torch.tensor(transformed_X[train_indices + lags - 1], dtype=torch.float32).to(device)
+valid_data_out = torch.tensor(transformed_X[valid_indices + lags - 1], dtype=torch.float32).to(device)
+test_data_out = torch.tensor(transformed_X[test_indices + lags - 1], dtype=torch.float32).to(device)
 
-# Concatenate the neural network input and outputs from each rho values
-nn_in = torch.cat(nn_input_final)
-nn_out = torch.cat(nn_output_final)
+train_dataset = TimeSeriesDataset(train_data_in, train_data_out)
+valid_dataset = TimeSeriesDataset(valid_data_in, valid_data_out)
+test_dataset = TimeSeriesDataset(test_data_in, test_data_out)
 ```
-### train the model
+### Train the data
 ```
-for epoch in range(30):
-    optimizer.zero_grad()
-    outputs = model(nn_in)
-    loss = criterion(outputs, nn_out)
-    loss.backward()
-    optimizer.step()
-    print(f"Epoch {epoch+1}, loss={loss.item():.4f}")
+shred = models.SHRED(num_sensors, m, hidden_size=64, hidden_layers=2, l1=350, l2=400, dropout=0.1).to(device)
+validation_errors = models.fit(shred, train_dataset, valid_dataset, batch_size=64, num_epochs=50, lr=1e-3, verbose=True, patience=5)
 ```
-### prepare the data to test
-we need to insert the $\rho$ = 17 and 35 to test the model. 
+### Test the data
 ```
-nn_input_test_final = []
-nn_output_test_final = []
+test_recons = sc.inverse_transform(shred(test_dataset.X).detach().cpu().numpy())
+test_ground_truth = sc.inverse_transform(test_dataset.Y.detach().cpu().numpy())
+print(np.linalg.norm(test_recons - test_ground_truth) / np.linalg.norm(test_ground_truth))
+```
+### Plot the data
+to plot the data, first we need to reshape it.  
+```
+from processdata import load_full_SST
 
-# Test the network with given test rho values
-for rho in rho_values_test:
-    
-    # Define the Lorenz equation
-    def lorenz_deriv(x_y_z, t0, sigma=sigma, beta=beta, rho=rho):
-        x, y, z = x_y_z
-        return [sigma * (y - x), x * (rho - z) - y, x * y - beta * z]
+# SST data with world map indices for plotting
+full_SST, sst_locs = load_full_SST()
+full_test_truth = full_SST[test_indices, :]
 
-    np.random.seed(123)
-    x0 = -15 + 30 * np.random.random((100, 3))
+# replacing SST data with our reconstruction
+full_test_recon = full_test_truth.copy()
+full_test_recon[:,sst_locs] = test_recons
 
-    x_t = np.asarray([integrate.odeint(lorenz_deriv, x0_j, t)
-                      for x0_j in x0])
-    
-    for j in range(100):
-        nn_input[j*(len(t)-1):(j+1)*(len(t)-1),:] = x_t[j,:-1,:]
-        nn_output[j*(len(t)-1):(j+1)*(len(t)-1),:] = x_t[j,1:,:]
-        
-    # Convert numpy arrays to PyTorch tensors
-    nn_in_test_tensor = torch.from_numpy(nn_input).float()
-    nn_out_test_tensor = torch.from_numpy(nn_output).float()
-    
-    # Appending the tensors to a list
-    nn_input_test_final.append(nn_in_test_tensor)
-    nn_output_test_final.append(nn_out_test_tensor)
-    
-# Concatenate the neural network input and outputs from each rho values
-nn_in_test = torch.cat(nn_input_test_final)
-nn_out_test = torch.cat(nn_output_test_final)
+# reshaping to 2d frames
+for x in [full_test_truth, full_test_recon]:
+    x.resize(len(x),180,360)
 ```
-### test the model
+after reshaping, we can plot the map using the given code.
 ```
-# Test the network
-with torch.no_grad():
-    outputs = model(nn_in_test)
-    compute_mse = criterion(outputs, nn_out_test)
+plotdata = [full_test_truth, full_test_recon]
+labels = ['truth','recon']
+fig, ax = plt.subplots(1,2,constrained_layout=True,sharey=True)
+for axis,p,label in zip(ax, plotdata, labels):
+    axis.imshow(p[0])
+    axis.set_aspect('equal')
+    axis.text(0.1,0.1,label,color='w',transform=axis.transAxes)
+```
 
-    print('Least squares error of test data: {}'.format(compute_mse.item()))
-```
-### fit the Long Short term Memory, train, and test the model
-the data preparation for Long Short term Memory is the same as Feedforward Neural Network. the only things that is different are the model. instead of using FFNN, we use LSTM.
-```
-# Create an LSTM neural network architecture
-class LSTMNet(nn.Module):
-    def __init__(self, input_size=3, hidden_size=15, num_layers=1, output_size=3):
-        super(LSTMNet, self).__init__()
-        self.hidden_size = hidden_size
-        self.num_layers = num_layers
-        
-        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
-        self.fc = nn.Linear(hidden_size, output_size)
+### Analysis of the performance as a function of the time lag variable
 
-    def forward(self, x):
-        # Initialize hidden and cell states
-        h0 = torch.zeros(self.num_layers, self.hidden_size)
-        c0 = torch.zeros(self.num_layers, self.hidden_size)
-        
-        # LSTM layer
-        out, _ = self.lstm(x, (h0, c0))
-        
-        # Fully connected layer
-        out = self.fc(out[:, :])
-        
-        return out
-```
-The initialization of th network is also different.
-```
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = LSTMNet().to(device)
-```
-### fit the Recurrent Neural Network, train, and test the model
-Perform the same things like FFNN and LSTM for RNN after changing the model and initialization of the network.
-```
-# Create an RNN neural network architecture
-class RNNNet(nn.Module):
-    def __init__(self, input_size=3, hidden_size=15, num_layers=1, output_size=3):
-        super(RNNNet, self).__init__()
-        self.hidden_size = hidden_size
-        self.num_layers = num_layers
-        
-        self.rnn = nn.RNN(input_size, hidden_size, num_layers, batch_first=True)
-        self.fc = nn.Linear(hidden_size, output_size)
 
-    def forward(self, x):
-        # Initialize hidden state
-        h0 = torch.zeros(self.num_layers, self.hidden_size)
-        
-        # RNN layer
-        out, _ = self.rnn(x, h0)
-        
-        # Fully connected layer
-        out = self.fc(out[:, :])  # Use the last output timestep
-        
-        return out
-        
-# Create model instance
-model = RNNNet()
-```
-### fit the Echo State Network, train, and test the model
-For Echo State Network, although the data preparation is the same, the training and testing model are slightly different.
-For the model and network initialization, we can use the code below.
-```
-class ESN(nn.Module):
-    def __init__(self, input_size=3, reservoir_size=100, output_size=3):
-        super(ESN, self).__init__()
-        self.input_size = input_size
-        self.reservoir_size = reservoir_size
-        self.output_size = output_size
-        
-        # Reservoir layer
-        self.reservoir = nn.Linear(input_size + reservoir_size, reservoir_size)
-        
-        # Output layer
-        self.output = nn.Linear(reservoir_size, output_size)
+### Analysis of the performance as a function of noise (add Gaussian noise to data)
 
-    def forward(self, x, reservoir_state):
-        # Concatenate input with reservoir state
-        combined_input = torch.cat([x, reservoir_state], dim=1)
-        
-        # Reservoir layer
-        reservoir_output = torch.tanh(self.reservoir(combined_input))
-        
-        # Output layer
-        output = self.output(reservoir_output)
-        
-        return output, reservoir_output
-        
-# Create model instance
-model = ESN(input_size=3, reservoir_size=100, output_size=3)
-```
-To train the model, we can use this
-```
-# Train the model
-for epoch in range(30):
-    optimizer.zero_grad()
-    reservoir_state = torch.zeros(nn_in.size(0), model.reservoir_size)
-    outputs, _ = model(nn_in, reservoir_state)
-    loss = criterion(outputs, nn_out)
-    loss.backward()
-    optimizer.step()
-    print(f"Epoch {epoch + 1}, loss={loss.item():.4f}")
-```
-and to test it, we can use
-```
-# Evaluation
-reservoir_state = torch.zeros(nn_in_test.size(0), model.reservoir_size)
-with torch.no_grad():
-    predicted_output, _ = model(nn_in_test, reservoir_state)
-    test_loss = criterion(predicted_output, nn_out_test)
 
-print('Least squares error of test data: {}'.format(test_loss.item()))
-```
+### Analysis of the performance as a function of the number of sensors
+
+
+
 ## IV. Computational Results.
 after training the model with FFNN, we got the following data    
 ![](FFNN_train.png)   
