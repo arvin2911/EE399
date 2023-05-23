@@ -173,4 +173,4 @@ we then plot the loss in term of the time lags.
 
 
 ## V. Summary and Conclusions.
-to conclude, all of the model works amazingly in the lorenz equations. but, some of them are not stable and some of them took a lot of time. The best model between FFNN, LSTM, RNN, and ESN are LSTM. not only it has the best least square error when testing the data, it didn't took a long time to run it. For FFNN, although the computation was fast, there are a little bit of spike on the least square error. For RNN, although the least square error was good, it took really long time to compute. lastly, for ESN, the result was better compared with FFNN in term of the least square error, but compare to LSTM, ESN was a little bit below it.
+to conclude, between the analysis of the performance as a function of the time lag variable, the noise, and the number of sensors, the gaussian noise analysis are the most stable among the others as the computational loss decrease gradually. the time lag variable analysis are not really stable as it has spikes on the loss graph. for the number of sensors analysis, although it does not have spikes, it is not as smooth as gaussian noise analysis.
