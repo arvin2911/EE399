@@ -131,9 +131,25 @@ time_lags = [1, 20, 40, 52, 70, 90]
 ```
 we prepare, train, and test the data in a loop with different time lags each iteration.
 ### Analysis of the performance as a function of noise (add Gaussian noise to data)
-
+the same goes for analysis of the performance as a function of noise (add Gaussian noise to data). we want the standard deviation og the gaussian noise to be
+```
+gaussian_noises = [0, 0.25, 0.5, 0.75, 1]
+```
+we then create the function 
+```
+def add_gaussian_noise(data, mean, std_dev):
+    noise = np.random.normal(mean, std_dev, data.shape)
+    noisy_data = data + noi
+    return noisy_data
+```
+after we generate the input sequence into the shred model, change the data to noisy data.
+```
+noisy_data = add_gaussian_noise(all_data_in, mean, gaussian_noise)
+```
+we prepare, train, and test the data in a loop with different gaussian noise each iteration.
 
 ### Analysis of the performance as a function of the number of sensors
+Analysis of the performance as a function of the number of sensors is almost the same as analysis of the performance as a function of the time lag variable. instead of changing the time lags, we change the number of sensors. in this case, the number of sensors are `num_sensors = [1, 3, 5, 10]`
 
 
 
