@@ -152,27 +152,25 @@ we prepare, train, and test the data in a loop with different gaussian noise eac
 Analysis of the performance as a function of the number of sensors is almost the same as analysis of the performance as a function of the time lag variable. instead of changing the time lags, we change the number of sensors. in this case, the number of sensors are `num_sensors = [1, 3, 5, 10]`
 
 ## IV. Computational Results.
-for the training with normal LSTM, we got the loss of 
-![](loss1.png)   
+for the training with normal LSTM, we got the loss of 3.73%
 and the real figure vs reconstructed figure are
 ![](fig1.png)  
 
+for analysis of the performance as a function of the time lag variable, the loss that we got in different time lags are
+![](lagloss.png)   
+we then plot the loss in term of the time lags.
+![](lagplot.png)    
 
-after training the model with FFNN, we got the following data    
-![](FFNN_train.png)   
-and after testing the model, we got the following data      
-![](FFNN_test.png)    
+for analysis of the performance as a function of noise (add Gaussian noise to data), the loss that we got in different standard deviation are
+![](gausloss.png)   
+we then plot the loss in term of the time lags.
+![](gausplot.png)    
 
-for LSTM,    
-![](LSTM_train.png) 
-![](LSTM_test.png) 
+and for analysis of the performance as a function of the number of sensors, the loss that we got in different number of sensors are
+![](numsloss.png)   
+we then plot the loss in term of the time lags.
+![](numsplot.png)   
 
-RNN,    
-![](RNN_train.png) 
-![](RNN_test.png) 
 
-and ESN.   
-![](ESN_train.png) 
-![](ESN_test.png) 
 ## V. Summary and Conclusions.
 to conclude, all of the model works amazingly in the lorenz equations. but, some of them are not stable and some of them took a lot of time. The best model between FFNN, LSTM, RNN, and ESN are LSTM. not only it has the best least square error when testing the data, it didn't took a long time to run it. For FFNN, although the computation was fast, there are a little bit of spike on the least square error. For RNN, although the least square error was good, it took really long time to compute. lastly, for ESN, the result was better compared with FFNN in term of the least square error, but compare to LSTM, ESN was a little bit below it.
