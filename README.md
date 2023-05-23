@@ -154,6 +154,8 @@ Analysis of the performance as a function of the number of sensors is almost the
 
 
 ## IV. Computational Results.
+
+
 after training the model with FFNN, we got the following data    
 ![](FFNN_train.png)   
 and after testing the model, we got the following data      
