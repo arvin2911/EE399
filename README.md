@@ -151,9 +151,11 @@ we prepare, train, and test the data in a loop with different gaussian noise eac
 ### Analysis of the performance as a function of the number of sensors
 Analysis of the performance as a function of the number of sensors is almost the same as analysis of the performance as a function of the time lag variable. instead of changing the time lags, we change the number of sensors. in this case, the number of sensors are `num_sensors = [1, 3, 5, 10]`
 
-
-
 ## IV. Computational Results.
+for the training with normal LSTM, we got the loss of 
+![](loss1.png)   
+and the real figure vs reconstructed figure are
+![](fig1.png)  
 
 
 after training the model with FFNN, we got the following data    
