@@ -125,8 +125,11 @@ for axis,p,label in zip(ax, plotdata, labels):
 ```
 
 ### Analysis of the performance as a function of the time lag variable
-
-
+for analysis of the performance as a function of the time lag variable, it is pretty much the same as the previous code. the only difference is we use different time lags.
+```
+time_lags = [1, 20, 40, 52, 70, 90]
+```
+we prepare, train, and test the data in a loop with different time lags each iteration.
 ### Analysis of the performance as a function of noise (add Gaussian noise to data)
 
 
